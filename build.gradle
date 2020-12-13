@@ -1,0 +1,49 @@
+apply plugin: "java"
+
+group 'com.github.thelampgod'
+version '1.2'
+
+compileJava {
+    sourceCompatibility = targetCompatibility = "1.8"
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    shade
+    compile.extendsFrom shade
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
+    shade 'org.apache.commons:commons-csv:1.8'
+    shade 'com.google.code.gson:gson:2.8.6'
+    shade("com.google.guava:guava:30.0-jre")
+}
+
+jar {
+    from {
+        configurations.shade.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }.unique()
+    } {
+        exclude "META-INF/**"
+        exclude sourceSets.main.output.asFileTree.collect {
+            return it.getPath().split("java/main/").last()
+        }
+    }
+
+    manifest {
+        attributes "Implementation-Title": "thelampgod",
+                "Implementation-Version": "1.2",
+                "Main-Class": "com.github.thelampgod.uuidtoname.Main"
+    }
+}
