@@ -49,13 +49,15 @@ public class Main {
             JsonElement element = parseString(record.get("nbt"));
             JsonObject obj = element.getAsJsonObject();
 
-            if (obj.get("OwnerUUID") != null && !obj.get("OwnerUUID").getAsString().equals("")) {
+            if (obj.get("OwnerUUID") != null && !obj.get("OwnerUUID").getAsString().isEmpty()) {
                 ++count;
                 String ownerUUID = obj.get("OwnerUUID").getAsString().replaceAll("-", "");
 
                 String name = uuidCache.computeIfAbsent(ownerUUID, uuid -> {
                     try {
                         return lookupName(uuid);
+                    } catch (FileNotFoundException e) {
+                        return "unknown(uuid=" + uuid + ')';
                     } catch (Exception e) {
                         throw new RuntimeException("failed to fetch profile for " + uuid, e);
                     }
@@ -100,7 +102,9 @@ public class Main {
             }
             scanner.close();
 
-            String json = builder.toString();
+            String json = builder.toString().trim();
+            if (json.isEmpty())
+                throw new FileNotFoundException();
             data = parseString(json);
         } finally {
             if (connection != null) {
