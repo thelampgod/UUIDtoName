@@ -20,6 +20,7 @@ public class Main {
     private static final Map<String, String> uuidCache = new ConcurrentHashMap<>();
 
     public static void main(String... args) throws IOException {
+
         if (args.length == 0) {
             System.out.println("Please specify input file.");
             return;
@@ -64,8 +65,14 @@ public class Main {
                 });
 
                 fw.write(record.get("id") + " " + obj.get("Pos") + " " + name + "\r\n");
-
                 System.out.println(record.get("id") + " " + obj.get("Pos") + " " + name);
+
+            } else if (obj.get("Tame") != null
+                    && obj.get("Tame").getAsInt() == 1
+                    && obj.get("OwnerUUID") == null
+                    && !record.get("id").equals("minecraft:skeleton_horse")) {
+                fw.write(record.get("id") + " " + obj.get("Pos") + " missing owneruuid\r\n");
+                System.out.println(record.get("id") + " " + obj.get("Pos") + " missing owneruuid");
             }
         }
 

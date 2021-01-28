@@ -1,7 +1,7 @@
 apply plugin: "java"
 
 group 'com.github.thelampgod'
-version '1.2'
+version '1.3'
 
 compileJava {
     sourceCompatibility = targetCompatibility = "1.8"
@@ -43,7 +43,7 @@ jar {
 
     manifest {
         attributes "Implementation-Title": "thelampgod",
-                "Implementation-Version": "1.2",
+                "Implementation-Version": archiveVersion,
                 "Main-Class": "com.github.thelampgod.uuidtoname.Main"
     }
 }
